@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Chroma database
+db/
+
+# Pytest
+.pytest_cache/
+
+# Scratch directory
+scratch/
+
+# Local SQLite databases
+*.db
+
+# Test coverage reports
+.coverage
+htmlcov/
+
+# Local presentation study guides
+study_guides/

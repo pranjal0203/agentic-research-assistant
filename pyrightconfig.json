@@ -1,0 +1,10 @@
+{
+  "venvPath": ".",
+  "venv": "venv",
+  "exclude": [
+    "**/__pyrefly_virtual__/**",
+    "**/node_modules",
+    "**/__pycache__",
+    "venv"
+  ]
+}

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Codebase Architecture Map</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Load Mermaid.js for Dynamic Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            themeVariables: {
+                background: '#131a26',
+                primaryColor: '#8b5cf6',
+                primaryTextColor: '#f3f4f6',
+                lineColor: '#3b82f6',
+                secondaryColor: '#10b981'
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131a26;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glow-purple: rgba(139, 92, 246, 0.25);
+            --glow-blue: rgba(59, 130, 246, 0.25);
+            --glow-green: rgba(16, 185, 129, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        header {
+            background: linear-gradient(135deg, #161e2e, #0b0f19);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: linear-gradient(to right, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 0.25rem;
+        }
+
+        .tab-btn {
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(to right, var(--accent-purple), var(--accent-blue));
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .toggle-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.2rem;
+        }
+
+        .toggle-btn {
+            border: 1px solid transparent;
+            outline: none;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .toggle-btn.active {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.4);
+            color: white;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+        }
+
+        /* Dashboard Main Layout */
+        .container {
+            display: none;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .container.active {
+            display: grid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 1. Walkthrough Layout */
+        #walkthrough-container {
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+        }
+
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flow-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .flow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--text-muted);
+            transition: all 0.25s ease;
+        }
+
+        .flow-card:hover {
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .flow-card.active {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.04);
+            box-shadow: 0 4px 20px var(--glow-purple);
+        }
+
+        .flow-card.active::before {
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-blue));
+        }
+
+        .flow-card-info h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-card-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .flow-step-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .flow-card.active .flow-step-num {
+            color: var(--accent-purple);
+            transform: scale(1.1);
+        }
+
+        .flow-connector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            opacity: 0.5;
+            height: 12px;
+        }
+
+        /* Detail Side Panel */
+        .detail-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .detail-header {
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-purple {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .detail-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .detail-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+
+        .file-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .file-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 0.35rem 0.55rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: #e5e7eb;
+            transition: all 0.2s ease;
+        }
+
+        .file-badge:hover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .code-snippet {
+            background: #07090e;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #34d399;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        /* 2. Dependency Graph Layout */
+        #graph-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .graph-instructions {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .graph-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-selected { background: var(--accent-purple); box-shadow: 0 0 8px var(--glow-purple); }
+        .legend-dependency { background: var(--accent-blue); box-shadow: 0 0 8px var(--glow-blue); }
+        .legend-dependant { background: var(--accent-green); box-shadow: 0 0 8px var(--glow-green); }
+
+        .graph-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .graph-node {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .graph-node h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .graph-node span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Active Dependency states */
+        .graph-node.node-selected {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.05);
+            box-shadow: 0 0 15px var(--glow-purple);
+            transform: scale(1.02);
+        }
+
+        .graph-node.node-dependency {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+            box-shadow: 0 0 15px var(--glow-blue);
+        }
+
+        .graph-node.node-dependant {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 0 15px var(--glow-green);
+        }
+
+        .graph-node.node-dimmed {
+            opacity: 0.25;
+            transform: scale(0.98);
+        }
+
+        /* 3. Live Model Diagrams Section */
+        #diagram-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .diagram-viewer {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-height: 500px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .diagram-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .diagram-tab-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .diagram-tab-btn.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        .mermaid {
+            width: 100%;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #walkthrough-container {
+                grid-template-columns: 1fr;
+            }
+            .detail-panel {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🤖 Intelligent Research Assistant Model</h1>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('walkthrough')">Flow Walkthrough</button>
+            <button class="tab-btn" onclick="switchTab('graph')">Dependency Call Graph</button>
+            <button class="tab-btn" onclick="switchTab('diagram')">Architecture Diagrams</button>
+        </div>
+    </header>
+
+    <!-- Tab 1: Flow Walkthrough -->
+    <div class="container active" id="walkthrough-container">
+        <div class="flow-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h2 class="section-title" id="walkthrough-title">Walkthrough Steps</h2>
+                <div class="toggle-container">
+                    <button class="toggle-btn active" id="btn-rag" onclick="switchWalkthroughMode('rag')">Conversational RAG</button>
+                    <button class="toggle-btn" id="btn-crew" onclick="switchWalkthroughMode('crew')">Autonomous Crew</button>
+                </div>
+            </div>
+            <div id="flow-wrapper">
+                <!-- Javascript populated -->
+            </div>
+        </div>
+
+        <div class="detail-panel">
+            <div class="detail-header">
+                <h2 id="detail-title">Loading...</h2>
+                <span class="badge badge-purple" id="detail-badge">RAG Step</span>
+            </div>
+            
+            <div>
+                <h4 class="detail-section-title">Description & Data Trace</h4>
+                <p class="detail-description" id="detail-desc">Select steps to trace details.</p>
+            </div>
+
+            <div>
+                <h4 class="detail-section-title">Files Involved</h4>
+                <ul class="file-list" id="detail-files">
+                    <!-- Badges -->
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="detail-section-title">Execution Context / Logic</h4>
+                <div class="code-snippet" id="detail-code">
+                    <!-- Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 2: Dependency Call Graph -->
+    <div class="container" id="graph-container">
+        <div class="graph-instructions">
+            <div style="flex: 1;">
+                <h3 style="font-family: 'Outfit', sans-serif; margin-bottom: 0.25rem;">Interactive Dependency Map</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Click any module to highlight its incoming and outgoing code imports dynamically.</p>
+            </div>
+            <div style="display: flex; gap: 1.5rem;">
+                <div class="graph-legend-item">
+                    <div class="legend-color legend-selected"></div>
+                    <span>Active File</span>
+                </div>
+                <div class="graph-legend-item">
+                    <div class="legend-color legend-dependency"></div>
+                    <span>Imports (Depends On)</span>
+                </div>
+                <div class="graph-legend-item">
+                    <div class="legend-color legend-dependant"></div>
+                    <span>Imported By (Used By)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="graph-grid" id="graph-grid-wrapper">
+            <!-- Populated via Javascript -->
+        </div>
+    </div>
+
+    <!-- Tab 3: Architecture Diagrams -->
+    <div class="container" id="diagram-container">
+        <div class="diagram-nav">
+            <button class="diagram-tab-btn active" id="diag-btn-rag" onclick="switchDiagramMode('rag')">Conversational RAG Sequence</button>
+            <button class="diagram-tab-btn" id="diag-btn-crew" onclick="switchDiagramMode('crew')">Autonomous Crew Collaboration</button>
+        </div>
+        <div class="diagram-viewer">
+            <div class="mermaid" id="mermaid-canvas">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Walkthrough Data ---
+        const walkthroughData = {
+            rag: [
+                {
+                    step: "1",
+                    title: "CLI Initialization & Collection Selection",
+                    summary: "Loads models, discovers local PDF folders, and starts the session.",
+                    badge: "Option 1 Start",
+                    desc: "The app initializes the embedding models and scans document subfolders in /data. If the user selects a directory, the index manager automatically loads or builds the corresponding Chroma DB vector index.",
+                    files: ["app.py", "services/pipeline.py", "services/index_manager.py"],
+                    code: "index_manager = IndexManager()\nselected_collection = index_manager.get_collection(name)\nvector_store = index_manager.get_vector_store(name)"
+                },
+                {
+                    step: "2",
+                    title: "Conversation Context Resolution",
+                    summary: "Resolves pronoun references and checks context availability.",
+                    badge: "Context Prep",
+                    desc: "Checks the query against the memory buffer. If pronoun references (e.g. 'it', 'they', 'former') are detected, the question rewriter synthesizes a standalone query using the chat context. If context cannot be resolved, it skips search and asks the user to clarify.",
+                    files: ["services/conversation.py", "services/question_rewriter.py", "services/conversation_memory.py"],
+                    code: "rewrite_result = rewriter.rewrite(question, memory.messages)\nif not rewrite_result.resolved:\n    return 'Please clarify what you are referring to.'"
+                },
+                {
+                    step: "3",
+                    title: "ReAct Agent Decision & Planning",
+                    summary: "Decides whether to search local PDFs, query web resources, or terminate.",
+                    badge: "Agent Planning",
+                    desc: "The agent receives a dynamic list of tools from the registry. It plans which parameters are required and starts a multi-step execution loop, bounded by max execution limits.",
+                    files: ["services/agent.py", "services/tool_selector.py", "services/tool_registry.py"],
+                    code: "tool_calls = tool_selector.select_tools(standalone_query)\nfor call in tool_calls:\n    observation = tool_executor.execute(call, runtime)"
+                },
+                {
+                    step: "4",
+                    title: "Multi-Source Evidence Retrieval",
+                    summary: "Queries local database stores and Tavily Search engines.",
+                    badge: "Retrieval",
+                    desc: "Retrieves document slices from Chroma DB (via vector store distances) and parses web contents from Tavily. Bounded to 500 characters max per document to fit rate limits.",
+                    files: ["services/retriever.py", "services/web_search.py", "services/tools/pdf_tool.py", "services/tools/web_tool.py"],
+                    code: "docs_with_scores = chroma.similarity_search_with_relevance_scores(query)\nweb_results = tavily_client.search(query, search_depth='advanced')"
+                },
+                {
+                    step: "5",
+                    title: "Evidence Fusion & Semantic Reranking",
+                    summary: "Normalizes candidates and ranks them using embeddings similarity.",
+                    badge: "Context Fusion",
+                    desc: "Groups all results into RetrievalCandidate models. Employs Hugging Face embeddings to compute similarity cosine distances, sorts the outputs, groups by source filename to ensure representation diversity, and constructs the generator context.",
+                    files: ["services/response_builder.py", "services/reranker.py", "services/context_fusion.py"],
+                    code: "candidates = normalize_sources(pdf_docs, web_docs)\nranked_list = rerank_candidates(query, candidates)\nfused_context = fuse_context(ranked_list[:HYBRID_TOP_K])"
+                },
+                {
+                    step: "6",
+                    title: "Grounded Answer Generation & Metadata Override",
+                    summary: "Validates the response structure and intercepts LLM refusals.",
+                    badge: "Answer Output",
+                    desc: "The generator creates the answer from the fused context. If the generator returns NOT_FOUND_MESSAGE (meaning the evidence is insufficient), the response builder intercepts it and overrides metadata fields to clean NONE values.",
+                    files: ["services/generator.py", "models/response.py", "services/response_builder.py"],
+                    code: "answer = llm.generate(fused_context, query)\nif answer == NOT_FOUND_MESSAGE:\n    return Response(answer=answer, source=Source.NONE, confidence=Confidence.NONE, citations=[])"
+                }
+            ],
+            crew: [
+                {
+                    step: "1",
+                    title: "Autonomous Trigger & LTM Preference Lookup",
+                    summary: "Loads past database records and style preferences.",
+                    badge: "Option 2 Start",
+                    desc: "Triggered from CLI. Queries db/memory.db for historical reports matching the topic keywords. Extracts preferred writing tone (concise, technical) and depth metrics.",
+                    files: ["app.py", "services/crew_service.py", "services/memory_service.py"],
+                    code: "past_context = get_past_context(topic)\npreference = get_preference() # concise/technical"
+                },
+                {
+                    step: "2",
+                    title: "MCP Dynamic Tool Loading",
+                    summary: "Handshakes with local servers to register system tools.",
+                    badge: "MCP Setup",
+                    desc: "MCP client boots local subprocess command paths configured in config/mcp_servers.json. Handshakes via stdio JSON-RPC, lists tools, and binds them dynamically as CrewAI tools.",
+                    files: ["services/mcp_client.py", "config/mcp_servers.json"],
+                    code: "client = MCPClient(server_config)\nclient.initialize()\nmcp_tools = client.list_tools() # converted to CrewAI tools"
+                },
+                {
+                    step: "3",
+                    title: "Planner Agent Orchestration",
+                    summary: "Lead Planner drafts a query list.",
+                    badge: "Planning Phase",
+                    desc: "The Planner analyzes the research topic, checks the historical context, and defines up to 3 highly explicit queries, preventing redundant web queries.",
+                    files: ["services/crew_service.py"],
+                    code: "planner_task = Task(\n    description='Define structured search strategy for ' + topic,\n    agent=planner_agent\n)"
+                },
+                {
+                    step: "4",
+                    title: "Specialist Evidence Collection",
+                    summary: "Executes tools while observing strict rate-limit boundaries.",
+                    badge: "Search Phase",
+                    desc: "The specialist executes local Chroma search and web search. Capped at max_iter=3 and observation sizes of 500 characters to prevent Groq rate limits.",
+                    files: ["services/crew_service.py", "services/retriever.py", "services/web_search.py"],
+                    code: "specialist_task = Task(\n    description='Retrieve precise evidence using tools',\n    agent=specialist_agent\n)"
+                },
+                {
+                    step: "5",
+                    title: "Report Synthesis & GROUNDING Verification",
+                    summary: "Synthesizer builds markdown report and runs citation verification.",
+                    badge: "Synthesis Phase",
+                    desc: "The Synthesis agent builds a comprehensive report. Enforces grounding checks ensuring that every claim is footnoted with citation files.",
+                    files: ["services/crew_service.py"],
+                    code: "synthesis_task = Task(\n    description='Compile markdown report with inline citations',\n    agent=synthesis_agent\n)"
+                },
+                {
+                    step: "6",
+                    title: "File Export & SQLite LTM Record Sync",
+                    summary: "Exports report markdown and saves context to LTM database.",
+                    badge: "Output Sync",
+                    desc: "Writes the compiled document to outputs/research_report_<timestamp>.md. Then logs the topic, timestamp, and report text to SQLite tables to support future Planner recall.",
+                    files: ["services/crew_service.py", "services/memory_service.py"],
+                    code: "save_research_report(topic, report_content)\nwith open(f'outputs/report_{ts}.md', 'w') as f:\n    f.write(report_content)"
+                }
+            ]
+        };
+
+        // --- Dependency Call Graph Data ---
+        const dependencies = {
+            "app.py": {
+                desc: "CLI controller. Directs users to Option 1 RAG or Option 2 Crew processes.",
+                dependsOn: ["services/pipeline.py", "services/conversation.py", "services/crew_service.py", "services/memory_service.py"],
+                usedBy: []
+            },
+            "services/pipeline.py": {
+                desc: "Initializes directories, Chroma clients and collection indexes.",
+                dependsOn: ["services/index_manager.py"],
+                usedBy: ["app.py"]
+            },
+            "services/index_manager.py": {
+                desc: "Discovers document collections and indexes them lazily.",
+                dependsOn: ["services/document_discovery.py", "services/document_loader.py", "services/text_splitter.py", "services/vector_store.py"],
+                usedBy: ["services/pipeline.py"]
+            },
+            "services/conversation.py": {
+                desc: "Orchestrates multi-turn RAG. Triggers pronoun rewriter and agent planners.",
+                dependsOn: ["services/question_rewriter.py", "services/agent.py", "services/conversation_memory.py"],
+                usedBy: ["app.py"]
+            },
+            "services/question_rewriter.py": {
+                desc: "Rewrites pronoun queries into standalone search questions.",
+                dependsOn: ["services/llm.py"],
+                usedBy: ["services/conversation.py"]
+            },
+            "services/agent.py": {
+                desc: "Orchestrates ReAct agent loop, tool planning steps and runs ToolExecutor.",
+                dependsOn: ["services/tool_selector.py", "services/tool_executor.py", "services/response_builder.py"],
+                usedBy: ["services/conversation.py"]
+            },
+            "services/response_builder.py": {
+                desc: "Gathers retrieval candidates, reranks, fusses context, and runs Generator.",
+                dependsOn: ["services/reranker.py", "services/context_fusion.py", "services/evaluator.py", "services/generator.py"],
+                usedBy: ["services/agent.py"]
+            },
+            "services/reranker.py": {
+                desc: "Applies Hugging Face embeddings to calculate cosine similarity ranks.",
+                dependsOn: ["services/embeddings.py"],
+                usedBy: ["services/response_builder.py"]
+            },
+            "services/crew_service.py": {
+                desc: "Assembles Planner, Specialist and Synthesizer agents. Injects SQLite memory contexts.",
+                dependsOn: ["services/memory_service.py", "services/mcp_client.py"],
+                usedBy: ["app.py"]
+            },
+            "services/mcp_client.py": {
+                desc: "Connects via JSON-RPC stdio subprocesses to negotiate system tools.",
+                dependsOn: ["config/mcp_servers.json"],
+                usedBy: ["services/crew_service.py"]
+            },
+            "services/memory_service.py": {
+                desc: "Defines SQLite schemas and saves reports/preferences to db/memory.db.",
+                dependsOn: [],
+                usedBy: ["app.py", "services/crew_service.py"]
+            }
+        };
+
+        // --- Mermaid Diagram Strings ---
+        const diagramData = {
+            rag: `
+sequenceDiagram
+    autonumber
+    actor Dev as Developer / CLI
+    participant app as app.py
+    participant conv as services/conversation.py
+    participant rew as services/question_rewriter.py
+    participant agent as services/agent.py
+    participant builder as services/response_builder.py
+    participant gen as services/generator.py
+
+    Dev->>app: Input Q: "What is self-attention?"
+    app->>conv: ask("What is self-attention?")
+    conv->>rew: rewrite("What is self-attention?")
+    rew-->>conv: Standalone Q
+    conv->>agent: answer_question(standalone_q)
+    agent->>agent: Decide Tool selection
+    agent->>builder: build_response(query, retrieved_docs)
+    builder->>gen: generate_answer(fused_context)
+    gen-->>builder: Answer text
+    builder-->>conv: Struct Response
+    conv-->>app: Display final response
+    app-->>Dev: Print to Console
+            `,
+            crew: `
+sequenceDiagram
+    autonumber
+    actor Dev as Developer / CLI
+    participant app as app.py
+    participant crew as services/crew_service.py
+    participant ltm as services/memory_service.py
+    participant mcp as services/mcp_client.py
+    participant crewai as CrewAI Runner
+
+    Dev->>app: Select Option 2: Research "BERT parameters"
+    app->>crew: run_autonomous_research("BERT parameters")
+    crew->>ltm: get_past_context("BERT parameters")
+    ltm-->>crew: Past history context
+    crew->>mcp: load_mcp_tools()
+    mcp-->>crew: File system / Dynamic tools
+    crew->>crewai: Kickoff (Planner + Specialist + Synthesizer)
+    crewai->>crewai: Execute retrieval tools
+    crewai->>crewai: Compile grounding citations
+    crewai-->>crew: Final Markdown text
+    crew->>ltm: save_research_report("BERT parameters", report)
+    crew-->>app: Report path outputs/research_report.md
+    app-->>Dev: Display completion
+            `
+        };
+
+        let activeTab = 'walkthrough';
+        let activeWalkthroughMode = 'rag';
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(tabId));
+            });
+            document.querySelectorAll('.container').forEach(cont => {
+                cont.classList.remove('active');
+            });
+            document.getElementById(`${tabId}-container`).classList.add('active');
+
+            if (tabId === 'diagram') {
+                renderDiagram();
+            }
+        }
+
+        // --- Walkthrough Tab logic ---
+        function switchWalkthroughMode(mode) {
+            activeWalkthroughMode = mode;
+            document.getElementById('btn-rag').classList.toggle('active', mode === 'rag');
+            document.getElementById('btn-crew').classList.toggle('active', mode === 'crew');
+            renderWalkthrough();
+        }
+
+        function selectStep(index) {
+            const steps = walkthroughData[activeWalkthroughMode];
+            const data = steps[index];
+            
+            document.querySelectorAll('.flow-card').forEach((card, idx) => {
+                card.classList.toggle('active', idx === index);
+            });
+
+            document.getElementById('detail-badge').innerText = data.badge;
+            document.getElementById('detail-badge').className = `badge ${activeWalkthroughMode === 'rag' ? 'badge-purple' : 'badge-blue'}`;
+            document.getElementById('detail-title').innerText = data.title;
+            document.getElementById('detail-desc').innerText = data.desc;
+            
+            const filesWrapper = document.getElementById('detail-files');
+            filesWrapper.innerHTML = '';
+            data.files.forEach(file => {
+                const li = document.createElement('li');
+                li.className = 'file-badge';
+                li.innerText = file;
+                filesWrapper.appendChild(li);
+            });
+
+            document.getElementById('detail-code').innerText = data.code;
+        }
+
+        function renderWalkthrough() {
+            const wrapper = document.getElementById('flow-wrapper');
+            wrapper.innerHTML = '';
+            
+            const steps = walkthroughData[activeWalkthroughMode];
+            steps.forEach((step, idx) => {
+                const card = document.createElement('div');
+                card.className = `flow-card ${idx === 0 ? 'active' : ''}`;
+                card.onclick = () => selectStep(idx);
+
+                const info = document.createElement('div');
+                info.className = 'flow-card-info';
+                
+                const h3 = document.createElement('h3');
+                h3.innerText = step.title;
+                info.appendChild(h3);
+
+                const p = document.createElement('p');
+                p.innerText = step.summary;
+                info.appendChild(p);
+
+                card.appendChild(info);
+
+                const num = document.createElement('div');
+                num.className = 'flow-step-num';
+                num.innerText = `0${step.step}`;
+                card.appendChild(num);
+
+                wrapper.appendChild(card);
+
+                if (idx < steps.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'flow-connector';
+                    arrow.innerText = '↓';
+                    wrapper.appendChild(arrow);
+                }
+            });
+
+            selectStep(0);
+        }
+
+        // --- Dependency Graph Tab Logic ---
+        function selectGraphNode(nodeName) {
+            const wrapper = document.getElementById('graph-grid-wrapper');
+            const nodes = document.querySelectorAll('.graph-node');
+            
+            if (!nodeName) {
+                nodes.forEach(node => {
+                    node.className = 'graph-node';
+                });
+                return;
+            }
+
+            const target = dependencies[nodeName];
+
+            nodes.forEach(node => {
+                const name = node.querySelector('h4').innerText;
+                if (name === nodeName) {
+                    node.className = 'graph-node node-selected';
+                } else if (target.dependsOn.includes(name)) {
+                    node.className = 'graph-node node-dependency';
+                } else if (target.usedBy.includes(name)) {
+                    node.className = 'graph-node node-dependant';
+                } else {
+                    node.className = 'graph-node node-dimmed';
+                }
+            });
+        }
+
+        function renderGraph() {
+            const wrapper = document.getElementById('graph-grid-wrapper');
+            wrapper.innerHTML = '';
+
+            Object.keys(dependencies).forEach(name => {
+                const dep = dependencies[name];
+                
+                const card = document.createElement('div');
+                card.className = 'graph-node';
+                card.onclick = (e) => {
+                    e.stopPropagation();
+                    selectGraphNode(name);
+                };
+
+                const h4 = document.createElement('h4');
+                h4.innerText = name;
+                card.appendChild(h4);
+
+                const span = document.createElement('span');
+                span.innerText = dep.desc;
+                card.appendChild(span);
+
+                wrapper.appendChild(card);
+            });
+
+            // Click outside grid resets highlight
+            document.getElementById('graph-container').onclick = () => selectGraphNode(null);
+        }
+
+        // --- Diagrams Tab Logic ---
+        let currentDiagramMode = 'rag';
+
+        function switchDiagramMode(mode) {
+            currentDiagramMode = mode;
+            document.getElementById('diag-btn-rag').classList.toggle('active', mode === 'rag');
+            document.getElementById('diag-btn-crew').classList.toggle('active', mode === 'crew');
+            renderDiagram();
+        }
+
+        function renderDiagram() {
+            const container = document.getElementById('mermaid-canvas');
+            container.removeAttribute('data-processed');
+            container.innerHTML = diagramData[currentDiagramMode];
+            mermaid.run({
+                nodes: [container]
+            });
+        }
+
+        // --- Init Boot ---
+        renderWalkthrough();
+        renderGraph();
+    </script>
+</body>
+</html>
