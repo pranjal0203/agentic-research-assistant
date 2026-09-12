@@ -1,4 +1,4 @@
-# 🤖 Intelligent Agentic Research Assistant
+# 🤖 Agentic Research Assistant
 
 > **Building a production-quality AI Research Assistant---one release at
 > a time.**
